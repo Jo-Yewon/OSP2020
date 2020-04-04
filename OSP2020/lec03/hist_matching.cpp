@@ -3,77 +3,67 @@
 
 using namespace std;
 
-void hist_matching_color(Mat &input, Mat &ref, Mat &matched, G *trans_func);
+void hist_matching(Mat &input, Mat &ref, Mat &equalized, G *trans_func);
 
 int main(){
-    // Get input and ref images
+    // Get input image
     Mat input = imread("input.jpg", CV_LOAD_IMAGE_COLOR);
-    Mat ref = imread("ref_color.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat input_gray;
+    cvtColor(input, input_gray, CV_RGB2GRAY);    // convert RGB to Grayscale
+
+    // Get reference image
+    Mat ref_input = imread("ref_gray.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat ref_gray;
+    cvtColor(ref_input, ref_gray, CV_RGB2GRAY);    // convert RGB to Grayscale
 
     // Make output image
-    Mat matched_YUV;
-    cvtColor(input, matched_YUV, CV_RGB2YUV);
-
-    // split each channel(Y, U, V) of matched image
-    Mat channels_matched[3];
-    split(matched_YUV, channels_matched);
-    Mat Y_matched = channels_matched[0];   // U = channels[1], V = channels[2]
-
-    // split each channel(Y, U, V) of ref image
-    Mat channels_ref[3];
-    split(ref, channels_ref);
-    Mat Y_ref = channels_ref[0];
+    Mat equalized = input_gray.clone();
 
     // PDF or transfer function txt files
-    FILE *f_matched_PDF_YUV, *f_PDF_RGB;
-    FILE *f_trans_func_matching_YUV;
+    FILE *f_PDF;
+    FILE *f_equalized_PDF_gray;
+    FILE *f_trans_func_matching;
 
-    float **PDF_RGB = cal_PDF_RGB(input);        // PDF of Input image(RGB) : [L][3]
+    f_PDF = fopen("PDF.txt", "w+");
+    f_equalized_PDF_gray = fopen("equalized_PDF_gray.txt", "w+");
+    f_trans_func_matching = fopen("trans_func_matching.txt", "w+");
 
-    f_PDF_RGB = fopen("PDF_RGB.txt", "w+");
-    f_matched_PDF_YUV = fopen("matched_PDF_YUV.txt", "w+");
-    f_trans_func_matching_YUV = fopen("trans_func_matching_YUV.txt", "w+");
+    // PDF of Input image(Grayscale) : [L]
+    float *PDF = cal_PDF(input_gray);
 
     // transfer function
-    G trans_func_matching_YUV[L] = { 0 };
+    G trans_func_matching[L] = { 0 };
 
-    // histogram matching on Y channel
-    hist_matching_color(Y_matched, Y_ref, channels_matched[0], trans_func_matching_YUV);
-
-    // merge Y, U, V channels
-    merge(channels_matched, 3, matched_YUV);
-
-    // YUV -> RGB (use "CV_YUV2RGB" flag)
-    cvtColor(matched_YUV, matched_YUV, CV_YUV2RGB);
+    hist_matching(input_gray, ref_gray, equalized, trans_func_matching);
 
     // equalized PDF (grayscale)
-    float **matched_PDF_YUV = cal_PDF_RGB(matched_YUV);
+    float *equalized_PDF_gray = cal_PDF(equalized);
 
     for (int i = 0; i < L; i++) {
         // write PDF
-        fprintf(f_PDF_RGB, "%d\t%f\t%f\t%f\n", i, PDF_RGB[i][0], PDF_RGB[i][1], PDF_RGB[i][2]);
-        fprintf(f_matched_PDF_YUV, "%d\t%f\t%f\t%f\n", i, matched_PDF_YUV[i][0], matched_PDF_YUV[i][1], matched_PDF_YUV[i][2]);
+        fprintf(f_PDF, "%d\t%f\n", i, PDF[i]);
+        fprintf(f_equalized_PDF_gray, "%d\t%f\n", i, equalized_PDF_gray[i]);
 
         // write transfer functions
-        fprintf(f_trans_func_matching_YUV, "%d\t%d\n", i, trans_func_matching_YUV[i]);
+        fprintf(f_trans_func_matching, "%d\t%d\n", i, trans_func_matching[i]);
     }
 
     // memory release
-    free(PDF_RGB);
-    fclose(f_PDF_RGB);
-    fclose(f_matched_PDF_YUV);
-    fclose(f_trans_func_matching_YUV);
+    free(PDF);
+    fclose(f_PDF);
+    fclose(f_equalized_PDF_gray);
+    fclose(f_trans_func_matching);
 
     ////////////////////// Show each image ///////////////////////
 
     namedWindow("Input", WINDOW_AUTOSIZE);
-    imshow("Input", input);
+    imshow("Input", input_gray);
 
-    namedWindow("Matched", WINDOW_AUTOSIZE);
-    imshow("Matched", matched_YUV);
+    namedWindow("Equalized", WINDOW_AUTOSIZE);
+    imshow("Equalized", equalized);
 
     namedWindow("Reference", WINDOW_AUTOSIZE);
-    imshow("Reference", ref);
+    imshow("Reference", ref_gray);
 
     //////////////////////////////////////////////////////////////
 
@@ -82,8 +72,8 @@ int main(){
 
 }
 
-//histogram matching for color image
-void hist_matching_color(Mat &input, Mat &ref, Mat &matched, G *trans_func){
+//histogram matching in grayScale image
+void hist_matching(Mat &input, Mat &ref, Mat &equalized, G *trans_func){
 
     G s;
     int left, right;
@@ -132,10 +122,6 @@ void hist_matching_color(Mat &input, Mat &ref, Mat &matched, G *trans_func){
 
     // Perform the transfer function
     for (int i = 0; i < input.rows; i++)
-        for (int j = 0; j < input.cols; j++)
-            matched.at<G>(i, j) = trans_func[input.at<G>(i, j)];
-
-    // memory release
-    free(CDF_input);
-    free(CDF_ref);
+    for (int j = 0; j < input.cols; j++)
+        equalized.at<G>(i, j) = trans_func[input.at<G>(i, j)];
 }

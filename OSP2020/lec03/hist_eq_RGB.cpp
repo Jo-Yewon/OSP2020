@@ -32,7 +32,7 @@ int main() {
 
     for (int i = 0; i < L; i++) {
         // write PDF
-        fprintf(f_PDF_RGB, "%d\t%f\t%f\t%f\n", i, CDF_RGB[i][0], CDF_RGB[i][1], CDF_RGB[i][2]);
+        fprintf(f_PDF_RGB, "%d\t%f\t%f\t%f\n", i, PDF_RGB[i][0], PDF_RGB[i][1], PDF_RGB[i][2]);
         fprintf(f_equalized_PDF_RGB, "%d\t%f\t%f\t%f\n", i, equalized_PDF_RGB[i][0], equalized_PDF_RGB[i][1], equalized_PDF_RGB[i][2]);
 
         // write transfer functions

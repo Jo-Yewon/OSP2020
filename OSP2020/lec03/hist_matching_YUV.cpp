@@ -9,6 +9,10 @@ int main(){
     // Get input and ref images
     Mat input = imread("input.jpg", CV_LOAD_IMAGE_COLOR);
     Mat ref = imread("ref_color.jpg", CV_LOAD_IMAGE_COLOR);
+    
+    // Get YUV
+    Mat ref_YUV;
+    cvtColor(ref, ref_YUV, CV_RGB2YUV);
 
     // Make output image
     Mat matched_YUV;
@@ -21,18 +25,20 @@ int main(){
 
     // split each channel(Y, U, V) of ref image
     Mat channels_ref[3];
-    split(ref, channels_ref);
+    split(ref_YUV, channels_ref);
     Mat Y_ref = channels_ref[0];
 
     // PDF or transfer function txt files
     FILE *f_matched_PDF_YUV, *f_PDF_RGB;
     FILE *f_trans_func_matching_YUV;
+    FILE *f_ref_PDF;
 
     float **PDF_RGB = cal_PDF_RGB(input);        // PDF of Input image(RGB) : [L][3]
 
     f_PDF_RGB = fopen("PDF_RGB.txt", "w+");
     f_matched_PDF_YUV = fopen("matched_PDF_YUV.txt", "w+");
     f_trans_func_matching_YUV = fopen("trans_func_matching_YUV.txt", "w+");
+    f_ref_PDF = fopen("ref_PDF_YUV.txt", "w+");
 
     // transfer function
     G trans_func_matching_YUV[L] = { 0 };
@@ -48,11 +54,13 @@ int main(){
 
     // equalized PDF (grayscale)
     float **matched_PDF_YUV = cal_PDF_RGB(matched_YUV);
+    float **ref_PDF = cal_PDF_RGB(ref);
 
     for (int i = 0; i < L; i++) {
         // write PDF
         fprintf(f_PDF_RGB, "%d\t%f\t%f\t%f\n", i, PDF_RGB[i][0], PDF_RGB[i][1], PDF_RGB[i][2]);
         fprintf(f_matched_PDF_YUV, "%d\t%f\t%f\t%f\n", i, matched_PDF_YUV[i][0], matched_PDF_YUV[i][1], matched_PDF_YUV[i][2]);
+        fprintf(f_ref_PDF, "%d\t%f\t%f\t%f\n", i, ref_PDF[i][0], ref_PDF[i][1], ref_PDF[i][2]);
 
         // write transfer functions
         fprintf(f_trans_func_matching_YUV, "%d\t%d\n", i, trans_func_matching_YUV[i]);
@@ -60,9 +68,12 @@ int main(){
 
     // memory release
     free(PDF_RGB);
+    free(matched_PDF_YUV);
+    free(ref_PDF);
     fclose(f_PDF_RGB);
     fclose(f_matched_PDF_YUV);
     fclose(f_trans_func_matching_YUV);
+    fclose(f_ref_PDF);
 
     ////////////////////// Show each image ///////////////////////
 

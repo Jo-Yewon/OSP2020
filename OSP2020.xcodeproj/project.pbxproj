@@ -40,6 +40,19 @@
 		175757122438F44700A0F7AC /* input.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = input.jpg; sourceTree = "<group>"; };
 		175757132438F4D400A0F7AC /* ref_color.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ref_color.jpg; sourceTree = "<group>"; };
 		175757142438F4D400A0F7AC /* ref_gray.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ref_gray.jpg; sourceTree = "<group>"; };
+		1785E35E243F03E300D8B82B /* laplacianGray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = laplacianGray.cpp; sourceTree = "<group>"; };
+		1785E360243F041200D8B82B /* GaussianRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GaussianRGB.cpp; sourceTree = "<group>"; };
+		1785E362243F042500D8B82B /* SobelRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SobelRGB.cpp; sourceTree = "<group>"; };
+		1785E364243F046B00D8B82B /* laplacianRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = laplacianRGB.cpp; sourceTree = "<group>"; };
+		1785E367243F051900D8B82B /* GaussianSepGray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GaussianSepGray.cpp; sourceTree = "<group>"; };
+		1785E369243F053300D8B82B /* GaussianSepRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GaussianSepRGB.cpp; sourceTree = "<group>"; };
+		1785E36B243F056400D8B82B /* UnsharpMaskingGray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnsharpMaskingGray.cpp; sourceTree = "<group>"; };
+		1785E36D243F057800D8B82B /* UnsharpMaskingRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnsharpMaskingRGB.cpp; sourceTree = "<group>"; };
+		179BA79B243E2EB2002542D1 /* GaussianGray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GaussianGray.cpp; sourceTree = "<group>"; };
+		179BA79D243E2EC3002542D1 /* lena.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = lena.jpg; sourceTree = "<group>"; };
+		179BA79E243E2EC3002542D1 /* SobelGray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SobelGray.cpp; sourceTree = "<group>"; };
+		179BA79F243E2EC3002542D1 /* MeanFilterRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeanFilterRGB.cpp; sourceTree = "<group>"; };
+		179BA7A0243E2EC3002542D1 /* MeanFilterGray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeanFilterGray.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +85,7 @@
 		175756EF2438EEB300A0F7AC /* OSP2020 */ = {
 			isa = PBXGroup;
 			children = (
+				179BA79A243E2E9B002542D1 /* lec04 */,
 				175756FC2438EF7B00A0F7AC /* lec03 */,
 				175756F82438EF3600A0F7AC /* lec01 */,
 				175756F72438EEF300A0F7AC /* lec02 */,
@@ -114,6 +128,26 @@
 				175757022438EF8900A0F7AC /* PDF_CDF.cpp */,
 			);
 			path = lec03;
+			sourceTree = "<group>";
+		};
+		179BA79A243E2E9B002542D1 /* lec04 */ = {
+			isa = PBXGroup;
+			children = (
+				179BA79D243E2EC3002542D1 /* lena.jpg */,
+				179BA7A0243E2EC3002542D1 /* MeanFilterGray.cpp */,
+				179BA79F243E2EC3002542D1 /* MeanFilterRGB.cpp */,
+				179BA79B243E2EB2002542D1 /* GaussianGray.cpp */,
+				1785E360243F041200D8B82B /* GaussianRGB.cpp */,
+				179BA79E243E2EC3002542D1 /* SobelGray.cpp */,
+				1785E362243F042500D8B82B /* SobelRGB.cpp */,
+				1785E35E243F03E300D8B82B /* laplacianGray.cpp */,
+				1785E364243F046B00D8B82B /* laplacianRGB.cpp */,
+				1785E367243F051900D8B82B /* GaussianSepGray.cpp */,
+				1785E369243F053300D8B82B /* GaussianSepRGB.cpp */,
+				1785E36B243F056400D8B82B /* UnsharpMaskingGray.cpp */,
+				1785E36D243F057800D8B82B /* UnsharpMaskingRGB.cpp */,
+			);
+			path = lec04;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

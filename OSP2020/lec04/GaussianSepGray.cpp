@@ -24,11 +24,14 @@ typedef double G;
 typedef Vec3d C;
 #endif
 
-Mat gaussianfilter_sep_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt);
+Mat gaussianfilter_sep(const Mat input, int n, float sigmaT, float sigmaS, const char* opt);
 
 int main() {
     Mat input = imread("lena.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat input_gray;
     Mat output;
+
+    cvtColor(input, input_gray, CV_RGB2GRAY);
 
     if (!input.data)
     {
@@ -36,30 +39,30 @@ int main() {
         return -1;
     }
 
-    namedWindow("Original", WINDOW_AUTOSIZE);
-    imshow("Original", input);
-    
-    output = gaussianfilter_sep_RGB(input, 11, 5, 5, "adjustkernel");
+    namedWindow("Grayscale", WINDOW_AUTOSIZE);
+    imshow("Grayscale", input_gray);
+    output = gaussianfilter_sep(input_gray, 11, 5, 5, "adjustkernel");
     //Boundary process: zero-paddle, mirroring, adjustkernel
 
     namedWindow("Gaussian Filter(Seperable)", WINDOW_AUTOSIZE);
     imshow("Gaussian Filter(Seperable)", output);
 
     waitKey(0);
+
     return 0;
 }
 
 
-Mat gaussianfilter_sep_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt) {
+Mat gaussianfilter_sep(const Mat input, int n, float sigmaT, float sigmaS, const char* opt) {
     Mat kernel_t, kernel_s;
     
     int row = input.rows;
     int col = input.cols;
     int kernel_size = (2 * n + 1);
-    int tempa, tempb;
+    int tempa;
+    int tempb;
     float denom;
     float kernelvalue;
-    float sum_b, sum_g, sum_r, sum;
 
     // Initialiazing Kernel Matrix t
     kernel_t = Mat::zeros(1, kernel_size, CV_32F);
@@ -92,51 +95,40 @@ Mat gaussianfilter_sep_RGB(const Mat input, int n, float sigmaT, float sigmaS, c
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
             if (!strcmp(opt, "zero-paddle")) {
-                sum_b = sum_g = sum_r = 0.0;
+                float sum1 = 0.0;
                 for (int b = -n; b <= n; b++)
                     if ((j + b <= col - 1) && (j + b >= 0)) {
                         //if the pixel is not a border pixel
                         kernelvalue = kernel_t.at<float>(0, b+n);
-                        sum_b += kernelvalue * (float)(input.at<C>(i, j + b)[0]);
-                        sum_g += kernelvalue * (float)(input.at<C>(i, j + b)[1]);
-                        sum_r += kernelvalue * (float)(input.at<C>(i, j + b)[2]);
+                        sum1 += kernelvalue * (float)(input.at<G>(i, j + b));
                     }
-                intermediate_output.at<C>(i, j)[0] = (G)sum_b;
-                intermediate_output.at<C>(i, j)[1] = (G)sum_g;
-                intermediate_output.at<C>(i, j)[2] = (G)sum_r;
+                intermediate_output.at<G>(i, j) = (G)sum1;
             }
             
             else if (!strcmp(opt, "mirroring")) {
-                sum_b = sum_g = sum_r = 0.0;
+                float sum1 = 0.0;
                 for (int b = -n; b <= n; b++) {
                     if (j + b > col - 1) tempb = j - b;
                     else if (j + b < 0) tempb = -(j + b);
                     else tempb = j + b;
                         
                     kernelvalue = kernel_t.at<float>(0, b+n);
-                    sum_b += kernelvalue * (float)(input.at<C>(i, tempb)[0]);
-                    sum_g += kernelvalue * (float)(input.at<C>(i, tempb)[1]);
-                    sum_r += kernelvalue * (float)(input.at<C>(i, tempb)[2]);
+                    sum1 += kernelvalue * (float)(input.at<G>(i, tempb));
                 }
-                intermediate_output.at<C>(i, j)[0] = (G)sum_b;
-                intermediate_output.at<C>(i, j)[1] = (G)sum_g;
-                intermediate_output.at<C>(i, j)[2] = (G)sum_r;
+                intermediate_output.at<G>(i, j) = (G)sum1;
             }
 
 
             else if (!strcmp(opt, "adjustkernel")) {
-                sum_b = sum_g = sum_r = sum = 0.0;
+                float sum1 = 0.0;
+                float sum2 = 0.0;
                 for (int b = -n; b <= n; b++)
                     if ((j + b <= col - 1) && (j + b >= 0)) {
                         kernelvalue = kernel_t.at<float>(0, b+n);
-                        sum_b += kernelvalue * (float)(input.at<C>(i, j + b)[0]);
-                        sum_g += kernelvalue * (float)(input.at<C>(i, j + b)[1]);
-                        sum_r += kernelvalue * (float)(input.at<C>(i, j + b)[2]);
-                        sum += kernelvalue;
+                        sum1 += kernelvalue * (float)(input.at<G>(i, j + b));
+                        sum2 += kernelvalue;
                     }
-                intermediate_output.at<C>(i, j)[0] = (G)(sum_b / sum);
-                intermediate_output.at<C>(i, j)[1] = (G)(sum_g / sum);
-                intermediate_output.at<C>(i, j)[2] = (G)(sum_r / sum);
+                intermediate_output.at<G>(i, j) = (G)(sum1/sum2);
             }
         }
     }
@@ -145,50 +137,39 @@ Mat gaussianfilter_sep_RGB(const Mat input, int n, float sigmaT, float sigmaS, c
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
             if (!strcmp(opt, "zero-paddle")) {
-                sum_b = sum_g = sum_r = 0.0;
+                float sum1 = 0.0;
                 for (int a = -n; a <= n; a++)
                     if ((i + a <= row - 1) && (i + a >= 0)) {
                         //if the pixel is not a border pixel
                         kernelvalue = kernel_s.at<float>(a+n, 0);
-                        sum_b += kernelvalue * (float)(intermediate_output.at<C>(i + a, j)[0]);
-                        sum_g += kernelvalue * (float)(intermediate_output.at<C>(i + a, j)[1]);
-                        sum_r += kernelvalue * (float)(intermediate_output.at<C>(i + a, j)[2]);
+                        sum1 += kernelvalue * (float)(intermediate_output.at<G>(i + a, j));
                     }
-                output.at<C>(i, j)[0] = (G)sum_b;
-                output.at<C>(i, j)[1] = (G)sum_g;
-                output.at<C>(i, j)[2] = (G)sum_r;
+                output.at<G>(i, j) = (G)sum1;
             }
                 
             else if (!strcmp(opt, "mirroring")) {
-                sum_b = sum_g = sum_r = 0.0;
+                float sum1 = 0.0;
                 for (int a = -n; a <= n; a++){
                     if (i + a > row - 1) tempa = i - a;
                     else if (i + a < 0) tempa = -(i + a);
                     else tempa = i + a;
                             
                     kernelvalue = kernel_s.at<float>(a+n, 0);
-                    sum_b += kernelvalue * (float)(intermediate_output.at<C>(tempa, j)[0]);
-                    sum_g += kernelvalue * (float)(intermediate_output.at<C>(tempa, j)[1]);
-                    sum_r += kernelvalue * (float)(intermediate_output.at<C>(tempa, j)[2]);
+                    sum1 += kernelvalue*(float)(intermediate_output.at<G>(tempa, j));
                 }
-                output.at<C>(i, j)[0] = (G)sum_b;
-                output.at<C>(i, j)[1] = (G)sum_g;
-                output.at<C>(i, j)[2] = (G)sum_r;
+                output.at<G>(i, j) = (G)sum1;
             }
     
             else if (!strcmp(opt, "adjustkernel")) {
-                sum_b = sum_g = sum_r = sum = 0.0;
+                float sum1 = 0.0;
+                float sum2 = 0.0;
                 for (int a = -n; a <= n; a++)
                     if ((i + a <= row - 1) && (i + a >= 0)) {
                         kernelvalue = kernel_s.at<float>(a+n, 0);
-                        sum_b += kernelvalue * (float)(intermediate_output.at<C>(i + a, j)[0]);
-                        sum_g += kernelvalue * (float)(intermediate_output.at<C>(i + a, j)[1]);
-                        sum_r += kernelvalue * (float)(intermediate_output.at<C>(i + a, j)[2]);
-                        sum += kernelvalue;
+                        sum1 += kernelvalue * (float)(intermediate_output.at<G>(i + a, j));
+                        sum2 += kernelvalue;
                     }
-                output.at<C>(i, j)[0] = (G)(sum_b / sum);
-                output.at<C>(i, j)[1] = (G)(sum_g / sum);
-                output.at<C>(i, j)[2] = (G)(sum_r / sum);
+                output.at<G>(i, j) = (G)(sum1/sum2);
             }
         }
     }

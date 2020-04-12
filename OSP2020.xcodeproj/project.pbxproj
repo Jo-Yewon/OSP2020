@@ -87,34 +87,34 @@
 		175756EF2438EEB300A0F7AC /* OSP2020 */ = {
 			isa = PBXGroup;
 			children = (
-				179BA79A243E2E9B002542D1 /* lec04 */,
-				175756FC2438EF7B00A0F7AC /* lec03 */,
-				175756F82438EF3600A0F7AC /* lec01 */,
-				175756F72438EEF300A0F7AC /* lec02 */,
+				179BA79A243E2E9B002542D1 /* lec04_Region */,
+				175756FC2438EF7B00A0F7AC /* lec03_Pixel */,
+				175756F82438EF3600A0F7AC /* lec01_Fundamentals */,
+				175756F72438EEF300A0F7AC /* lec02_Display */,
 				175756F02438EEB300A0F7AC /* main.cpp */,
 			);
 			path = OSP2020;
 			sourceTree = "<group>";
 		};
-		175756F72438EEF300A0F7AC /* lec02 */ = {
+		175756F72438EEF300A0F7AC /* lec02_Display */ = {
 			isa = PBXGroup;
 			children = (
 				1757570C2438EFAA00A0F7AC /* rotate.cpp */,
 				1757570D2438EFAA00A0F7AC /* stitching.cpp */,
 			);
-			path = lec02;
+			path = lec02_Display;
 			sourceTree = "<group>";
 		};
-		175756F82438EF3600A0F7AC /* lec01 */ = {
+		175756F82438EF3600A0F7AC /* lec01_Fundamentals */ = {
 			isa = PBXGroup;
 			children = (
 				175756FA2438EF5200A0F7AC /* practice.cpp */,
 				175756F92438EF5200A0F7AC /* practice.hpp */,
 			);
-			path = lec01;
+			path = lec01_Fundamentals;
 			sourceTree = "<group>";
 		};
-		175756FC2438EF7B00A0F7AC /* lec03 */ = {
+		175756FC2438EF7B00A0F7AC /* lec03_Pixel */ = {
 			isa = PBXGroup;
 			children = (
 				175757132438F4D400A0F7AC /* ref_color.jpg */,
@@ -129,10 +129,10 @@
 				175757042438EF8900A0F7AC /* hist_stretching.cpp */,
 				175757022438EF8900A0F7AC /* PDF_CDF.cpp */,
 			);
-			path = lec03;
+			path = lec03_Pixel;
 			sourceTree = "<group>";
 		};
-		179BA79A243E2E9B002542D1 /* lec04 */ = {
+		179BA79A243E2E9B002542D1 /* lec04_Region */ = {
 			isa = PBXGroup;
 			children = (
 				179BA79D243E2EC3002542D1 /* lena.jpg */,
@@ -151,7 +151,7 @@
 				1785E36B243F056400D8B82B /* UnsharpMaskingGray.cpp */,
 				1785E36D243F057800D8B82B /* UnsharpMaskingRGB.cpp */,
 			);
-			path = lec04;
+			path = lec04_Region;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

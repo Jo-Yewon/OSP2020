@@ -24,11 +24,14 @@ typedef double G;
 typedef Vec3d C;
 #endif
 
-Mat unsharpMask_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt, float k);
+Mat laplacianfilter_RGB(const Mat input);
 Mat gaussianfilter_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt);
 
+
 int main() {
+
     Mat input = imread("lena.jpg", CV_LOAD_IMAGE_COLOR);
+    input = gaussianfilter_RGB(input, 11, 1, 1, "adjustkernel");
     Mat output;
 
     if (!input.data)
@@ -37,37 +40,59 @@ int main() {
         return -1;
     }
 
-    namedWindow("Original", WINDOW_AUTOSIZE);
-    imshow("Original", input);
-    
-    output = unsharpMask_RGB(input, 11, 5, 5, "mirroring", 0.7);
-    //Boundary process: zero-paddle, mirroring, adjustkernel
-    namedWindow("unsharpMask", WINDOW_AUTOSIZE);
-    imshow("unsharpMask", output);
+//    namedWindow("Original", WINDOW_AUTOSIZE);
+//    imshow("Original", input);
+    output = laplacianfilter_RGB(input); //Boundary process: zero-paddle, mirroring, adjustkernel
+
+    namedWindow("Laplacian", WINDOW_AUTOSIZE);
+    imshow("Laplacian", output);
 
     waitKey(0);
-
     return 0;
 }
 
 
-Mat unsharpMask_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt, float k){
+Mat laplacianfilter_RGB(const Mat input) {
+
+    Mat kernel;
+
     int row = input.rows;
     int col = input.cols;
-    float out;
-    
-    Mat lowFilterRes = gaussianfilter_RGB(input, n, sigmaT, sigmaS, opt);
+    int tempa, tempb, sum_b, sum_g, sum_r;
+    int n = 1; // Sobel Filter Kernel N
+    const int c = 10;
+
+    Mat L = Mat::zeros(3, 3, CV_32F);
+    L.at<int>(0, 1) = L.at<int>(1, 0) = L.at<int>(1, 2) = L.at<int>(2, 1) = 1;
+    L.at<int>(1, 1) = -4;
+
     Mat output = Mat::zeros(row, col, input.type());
-    
-    for (int i = 0; i < row; i++)
-        for (int j = 0; j < col; j++)
-            for (int channel = 0; channel < 3; channel++){
-                out = (input.at<C>(i, j)[channel] -  lowFilterRes.at<C>(i, j)[channel] * k)/(1 - k);
-                if (out < 0) out = 0;
-                else if (out > 255) out = 255;
-                output.at<C>(i, j)[channel] = (G)(out);
+
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            sum_b = sum_g = sum_r = 0;
+            
+            for (int a = -n; a <= n; a++) {
+                for (int b = -n; b <= n; b++) {
+                    // Use mirroring boundary process
+                    if (i + a > row - 1) tempa = i - a;
+                    else if (i + a < 0) tempa = -(i + a);
+                    else tempa = i + a;
+                    
+                    if (j + b > col - 1) tempb = j - b;
+                    else if (j + b < 0) tempb = -(j + b);
+                    else tempb = j + b;
+                    
+                    sum_b += input.at<C>(tempa, tempb)[0] * L.at<int>(a+n, b+n);
+                    sum_g += input.at<C>(tempa, tempb)[1] * L.at<int>(a+n, b+n);
+                    sum_r += input.at<C>(tempa, tempb)[2] * L.at<int>(a+n, b+n);
+                }
             }
-    
+            output.at<C>(i, j)[0] = (G)(c * abs(sum_b));
+            output.at<C>(i, j)[1] = (G)(c * abs(sum_g));
+            output.at<C>(i, j)[2] = (G)(c * abs(sum_r));
+        }
+    }
     return output;
 }
 

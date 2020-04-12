@@ -92,25 +92,13 @@ Mat meanfilter(const Mat input, int n, const char* opt) {
                 float sum1 = 0.0;
                 for (int a = -n; a <= n; a++) { // for each kernel window
                     for (int b = -n; b <= n; b++) {
-
-                        if (i + a > row - 1) {  //mirroring for the border pixels
-                            tempa = i - a;
-                        }
-                        else if (i + a < 0) {
-                            tempa = -(i + a);
-                        }
-                        else {
-                            tempa = i + a;
-                        }
-                        if (j + b > col - 1) {
-                            tempb = j - b;
-                        }
-                        else if (j + b < 0) {
-                            tempb = -(j + b);
-                        }
-                        else {
-                            tempb = j + b;
-                        }
+                        if (i + a > row - 1) tempa = i - a;
+                        else if (i + a < 0) tempa = -(i + a);
+                        else tempa = i + a;
+                        
+                        if (j + b > col - 1) tempb = j - b;
+                        else if (j + b < 0) tempb = -(j + b);
+                        else tempb = j + b;
                         sum1 += kernelvalue*(float)(input.at<G>(tempa, tempb));
                     }
                 }

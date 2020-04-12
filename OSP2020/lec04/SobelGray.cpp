@@ -61,6 +61,7 @@ Mat sobelfilter(const Mat input) {
     int col = input.cols;
     int tempa, tempb, ix, iy;
     int n = 1; // Sobel Filter Kernel N
+    const float c = 0.8;
 
     // Initialiazing 2 Kernel Matrix with 3x3 size for Sx and Sy
     //Fill code to initialize Sobel filter kernel matrix for Sx and Sy (Given in the lecture notes)
@@ -96,7 +97,7 @@ Mat sobelfilter(const Mat input) {
                     iy += input.at<G>(tempa, tempb) * Sy.at<int>(a+n, b+n);
                 }
             }
-            output.at<G>(i, j) = (G)sqrt(ix * ix + iy * iy);
+            output.at<G>(i, j) = (G)(c * sqrt(ix * ix + iy * iy));
         }
     }
     return output;

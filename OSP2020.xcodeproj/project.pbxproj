@@ -53,6 +53,8 @@
 		179BA79E243E2EC3002542D1 /* SobelGray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SobelGray.cpp; sourceTree = "<group>"; };
 		179BA79F243E2EC3002542D1 /* MeanFilterRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeanFilterRGB.cpp; sourceTree = "<group>"; };
 		179BA7A0243E2EC3002542D1 /* MeanFilterGray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeanFilterGray.cpp; sourceTree = "<group>"; };
+		17DA77D12442F9610030DB3A /* laplacianGaussianGray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = laplacianGaussianGray.cpp; sourceTree = "<group>"; };
+		17DA77D22443011E0030DB3A /* laplacianGaussainRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = laplacianGaussainRGB.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,7 +143,9 @@
 				179BA79E243E2EC3002542D1 /* SobelGray.cpp */,
 				1785E362243F042500D8B82B /* SobelRGB.cpp */,
 				1785E35E243F03E300D8B82B /* laplacianGray.cpp */,
+				17DA77D12442F9610030DB3A /* laplacianGaussianGray.cpp */,
 				1785E364243F046B00D8B82B /* laplacianRGB.cpp */,
+				17DA77D22443011E0030DB3A /* laplacianGaussainRGB.cpp */,
 				1785E367243F051900D8B82B /* GaussianSepGray.cpp */,
 				1785E369243F053300D8B82B /* GaussianSepRGB.cpp */,
 				1785E36B243F056400D8B82B /* UnsharpMaskingGray.cpp */,

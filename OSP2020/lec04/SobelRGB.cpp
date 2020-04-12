@@ -58,6 +58,7 @@ Mat sobelfilter_RGB(const Mat input) {
     int tempa, tempb;
     float ix_b, iy_b, ix_g, iy_g, ix_r, iy_r;
     int n = 1; // Sobel Filter Kernel N
+    const float c = 0.8;
 
     // Initialiazing 2 Kernel Matrix with 3x3 size for Sx and Sy
     //Fill code to initialize Sobel filter kernel matrix for Sx and Sy (Given in the lecture notes)
@@ -99,9 +100,9 @@ Mat sobelfilter_RGB(const Mat input) {
                     iy_r += input.at<C>(tempa, tempb)[2] * Sy.at<int>(a+n, b+n);
                 }
             }
-            output.at<C>(i, j)[0] = (G)sqrt(ix_b * ix_b + iy_b * iy_b);
-            output.at<C>(i, j)[1] = (G)sqrt(ix_g * ix_g + iy_g * iy_g);
-            output.at<C>(i, j)[2] = (G)sqrt(ix_r * ix_r + iy_b * iy_r);
+            output.at<C>(i, j)[0] = (G)(c * sqrt(ix_b * ix_b + iy_b * iy_b));
+            output.at<C>(i, j)[1] = (G)(c * sqrt(ix_g * ix_g + iy_g * iy_g));
+            output.at<C>(i, j)[2] = (G)(c * sqrt(ix_r * ix_r + iy_b * iy_r));
         }
     }
     return output;

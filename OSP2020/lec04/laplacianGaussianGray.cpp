@@ -24,12 +24,17 @@ typedef double G;
 typedef Vec3d C;
 #endif
 
-Mat unsharpMask_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt, float k);
-Mat gaussianfilter_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt);
+Mat laplacianfilter(const Mat input);
+Mat gaussianfilter(const Mat input, int n, float sigmaT, float sigmaS, const char* opt);
 
 int main() {
+
     Mat input = imread("lena.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat input_gray;
     Mat output;
+
+    cvtColor(input, input_gray, CV_RGB2GRAY);
+    input_gray = gaussianfilter(input_gray, 11, 1, 1, "mirroring");
 
     if (!input.data)
     {
@@ -37,50 +42,69 @@ int main() {
         return -1;
     }
 
-    namedWindow("Original", WINDOW_AUTOSIZE);
-    imshow("Original", input);
-    
-    output = unsharpMask_RGB(input, 11, 5, 5, "mirroring", 0.7);
-    //Boundary process: zero-paddle, mirroring, adjustkernel
-    namedWindow("unsharpMask", WINDOW_AUTOSIZE);
-    imshow("unsharpMask", output);
+    namedWindow("Grayscale", WINDOW_AUTOSIZE);
+    imshow("Grayscale", input_gray);
+    output = laplacianfilter(input_gray); //Boundary process: zero-paddle, mirroring, adjustkernel
+
+    namedWindow("Laplacian", WINDOW_AUTOSIZE);
+    imshow("Laplacian", output);
+
 
     waitKey(0);
-
     return 0;
 }
 
 
-Mat unsharpMask_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt, float k){
+Mat laplacianfilter(const Mat input) {
+
+    Mat kernel;
+
     int row = input.rows;
     int col = input.cols;
-    float out;
-    
-    Mat lowFilterRes = gaussianfilter_RGB(input, n, sigmaT, sigmaS, opt);
+    int tempa, tempb, sum;
+    int n = 1; // Sobel Filter Kernel N
+    const int c = 10;
+
+    Mat L = Mat::zeros(3, 3, CV_32F);
+    L.at<int>(0, 1) = L.at<int>(1, 0) = L.at<int>(1, 2) = L.at<int>(2, 1) = 1;
+    L.at<int>(1, 1) = -4;
+
     Mat output = Mat::zeros(row, col, input.type());
-    
-    for (int i = 0; i < row; i++)
-        for (int j = 0; j < col; j++)
-            for (int channel = 0; channel < 3; channel++){
-                out = (input.at<C>(i, j)[channel] -  lowFilterRes.at<C>(i, j)[channel] * k)/(1 - k);
-                if (out < 0) out = 0;
-                else if (out > 255) out = 255;
-                output.at<C>(i, j)[channel] = (G)(out);
+
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            sum = 0;
+            
+            for (int a = -n; a <= n; a++) {
+                for (int b = -n; b <= n; b++) {
+                    // Use mirroring boundary process
+                    if (i + a > row - 1) tempa = i - a;
+                    else if (i + a < 0) tempa = -(i + a);
+                    else tempa = i + a;
+                    
+                    if (j + b > col - 1) tempb = j - b;
+                    else if (j + b < 0) tempb = -(j + b);
+                    else tempb = j + b;
+                    
+                    sum += input.at<G>(tempa, tempb) * L.at<int>(a+n, b+n);
+                }
             }
-    
+            output.at<G>(i, j) = (G)(c * abs(sum));
+        }
+    }
     return output;
 }
 
-Mat gaussianfilter_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt) {
+Mat gaussianfilter(const Mat input, int n, float sigmaT, float sigmaS, const char* opt) {
     Mat kernel;
     
     int row = input.rows;
     int col = input.cols;
     int kernel_size = (2 * n + 1);
-    int tempa, tempb;
+    int tempa;
+    int tempb;
     float denom;
     float kernelvalue;
-    float sum1_b, sum1_g, sum1_r, sum;
 
     // Initialiazing Kernel Matrix
     kernel = Mat::zeros(kernel_size, kernel_size, CV_32F);
@@ -105,29 +129,22 @@ Mat gaussianfilter_RGB(const Mat input, int n, float sigmaT, float sigmaS, const
     
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
-            sum1_b = sum1_g = sum1_r = 0.0;
 
             if (!strcmp(opt, "zero-paddle")) {
-                sum1_b = sum1_g = sum1_r = 0.0;
-                
+                float sum1 = 0.0;
                 for (int a = -n; a <= n; a++)
                     for (int b = -n; b <= n; b++)
                         if ((i + a <= row - 1) && (i + a >= 0) &&
                             (j + b <= col - 1) && (j + b >= 0)) {
                             //if the pixel is not a border pixel
                             kernelvalue = kernel.at<float>(a+n, b+n);
-                            sum1_b += kernelvalue * (float)(input.at<C>(i + a, j + b)[0]);
-                            sum1_g += kernelvalue * (float)(input.at<C>(i + a, j + b)[1]);
-                            sum1_r += kernelvalue * (float)(input.at<C>(i + a, j + b)[2]);
+                            sum1 += kernelvalue * (float)(input.at<G>(i + a, j + b));
                         }
-                output.at<C>(i, j)[0] = (G)sum1_b;
-                output.at<C>(i, j)[1] = (G)sum1_g;
-                output.at<C>(i, j)[2] = (G)sum1_r;
+                output.at<G>(i, j) = (G)sum1;
             }
             
             else if (!strcmp(opt, "mirroring")) {
-                sum1_b = sum1_g = sum1_r = 0.0;
-                
+                float sum1 = 0.0;
                 for (int a = -n; a <= n; a++)
                     for (int b = -n; b <= n; b++) {
                         if (i + a > row - 1) tempa = i - a;
@@ -139,31 +156,23 @@ Mat gaussianfilter_RGB(const Mat input, int n, float sigmaT, float sigmaS, const
                         else tempb = j + b;
                         
                         kernelvalue = kernel.at<float>(a+n, b+n);
-                        sum1_b += kernelvalue * (float)(input.at<C>(tempa, tempb)[0]);
-                        sum1_g += kernelvalue * (float)(input.at<C>(tempa, tempb)[1]);
-                        sum1_r += kernelvalue * (float)(input.at<C>(tempa, tempb)[2]);
+                        sum1 += kernelvalue*(float)(input.at<G>(tempa, tempb));
                     }
-                output.at<C>(i, j)[0] = (G)sum1_b;
-                output.at<C>(i, j)[1] = (G)sum1_g;
-                output.at<C>(i, j)[2] = (G)sum1_r;
+                output.at<G>(i, j) = (G)sum1;
             }
 
 
             else if (!strcmp(opt, "adjustkernel")) {
-                sum1_b = sum1_g = sum1_r = sum = 0.0;
-                
+                float sum1 = 0.0;
+                float sum2 = 0.0;
                 for (int a = -n; a <= n; a++)
                     for (int b = -n; b <= n; b++)
                         if ((i + a <= row - 1) && (i + a >= 0) && (j + b <= col - 1) && (j + b >= 0)) {
                         kernelvalue = kernel.at<float>(a+n, b+n);
-                        sum1_b += kernelvalue * (float)(input.at<C>(i + a, j + b)[0]);
-                        sum1_g += kernelvalue * (float)(input.at<C>(i + a, j + b)[1]);
-                        sum1_r += kernelvalue * (float)(input.at<C>(i + a, j + b)[2]);
-                        sum += kernelvalue;
+                        sum1 += kernelvalue * (float)(input.at<G>(i + a, j + b));
+                        sum2 += kernelvalue;
                     }
-                output.at<C>(i, j)[0] = (G)(sum1_b / sum);
-                output.at<C>(i, j)[1] = (G)(sum1_g / sum);
-                output.at<C>(i, j)[2] = (G)(sum1_r / sum);
+                output.at<G>(i, j) = (G)(sum1/sum2);
             }
         }
     }

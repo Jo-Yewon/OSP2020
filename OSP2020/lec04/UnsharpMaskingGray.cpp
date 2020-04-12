@@ -25,6 +25,7 @@ typedef Vec3d C;
 #endif
 
 Mat unsharpMask(const Mat input, int n, float sigmaT, float sigmaS, const char* opt, float k);
+Mat gaussianfilter(const Mat input, int n, float sigmaT, float sigmaS, const char* opt);
 
 int main() {
     Mat input = imread("lena.jpg", CV_LOAD_IMAGE_COLOR);
@@ -39,13 +40,13 @@ int main() {
         return -1;
     }
 
-    namedWindow("Grayscale", WINDOW_AUTOSIZE);
-    imshow("Grayscale", input_gray);
-    output = gaussianfilter(input_gray, 11, 5, 5, "mirroring");
+    namedWindow("GrayScale", WINDOW_AUTOSIZE);
+    imshow("GrayScale", input_gray);
+    
+    output = unsharpMask(input_gray, 11, 5, 5, "mirroring", 0.7);
     //Boundary process: zero-paddle, mirroring, adjustkernel
-
-    namedWindow("Gaussian Filter", WINDOW_AUTOSIZE);
-    imshow("Gaussian Filter", output);
+    namedWindow("unsharpMask", WINDOW_AUTOSIZE);
+    imshow("unsharpMask", output);
 
     waitKey(0);
 
@@ -54,6 +55,25 @@ int main() {
 
 
 Mat unsharpMask(const Mat input, int n, float sigmaT, float sigmaS, const char* opt, float k){
+    int row = input.rows;
+    int col = input.cols;
+    
+    Mat lowFilterRes = gaussianfilter(input, n, sigmaT, sigmaS, opt);
+    Mat output = Mat::zeros(row, col, input.type());
+    
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++){
+            float out = (input.at<G>(i, j) -  lowFilterRes.at<G>(i, j) * k)/(1 - k);
+            if (out < 0) out = 0;
+            else if (out > 255) out = 255;
+            
+            output.at<G>(i, j) = (G)(out);
+        }
+    
+    return output;
+}
+
+Mat gaussianfilter(const Mat input, int n, float sigmaT, float sigmaS, const char* opt) {
     Mat kernel;
     
     int row = input.rows;
@@ -83,7 +103,6 @@ Mat unsharpMask(const Mat input, int n, float sigmaT, float sigmaS, const char* 
     }
 
     Mat output = Mat::zeros(row, col, input.type());
-    
     
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {

@@ -10,7 +10,7 @@ To use, place your image in the same directory with exec files.
 
 ![rotate](./rotate.png)
 
----
+<br>
 
 ## Image stitching
 

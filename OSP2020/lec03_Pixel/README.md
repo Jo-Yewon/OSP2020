@@ -9,7 +9,7 @@ To use, place your image in the same directory with exec files.
 
 In this code, it calculates PDF(Probability Density Function) and CDF(Cumulative Distribution Function) of image as text files.
 
----
+<br>
 
 ## Histogram Stretching
 
@@ -24,7 +24,7 @@ This code increase the visibility by stretching the histogram of the image.
 
 ![stretching](./stretching.png)
 
----
+<br>
 
 ## Histogram Equalization
 
@@ -42,7 +42,7 @@ This code increase the visibility of the image by equalizing histogram of it. Al
 ![equalization](./equalization.png)
 
 
----
+<br>
 
 ## Histogram Matching
 

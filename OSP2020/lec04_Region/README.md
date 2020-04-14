@@ -13,7 +13,7 @@ The purpose of this code is to apply a Mean Filter, a kind of low-pass filter to
 
 ![mean](./mean.png)
 
----
+<br>
 
 ## Gaussian Filter
 
@@ -28,7 +28,7 @@ The purpose of this source code is to apply a Gaussian Filter, a low pass filter
 
 ![gaussian](./gaussian.png)
 
----
+<br>
 
 ## Sobel Filter
 
@@ -44,7 +44,7 @@ This source code is intended to apply Sobel Filter, a high pass filter to the im
 ![sobel](./sobel.png)
 
 
----
+<br>
 
 ## Laplacian Filter
 
@@ -59,8 +59,7 @@ This source code is intended to apply a high pass filter, Laplacian Filter, to a
 
 ![laplacian](./laplacian.png)
 
-
----
+<br>
 
 ## Laplacian of Gaussian(LoG)
 
@@ -73,8 +72,7 @@ This source code is intended to apply a high pass filter, Laplacian Filter, to a
 
 ![LoG](./LoG.png)
 
-
----
+<br>
 
 ## Seperable Gaussian Filter
 
@@ -85,8 +83,7 @@ To use, place your image in the same directory with exec files.
 
 The purpose of this source code is to apply a Gaussian Filter, a low pass filter to the image. Also, in this process, filter is applied by dividing it twice so that the operation can be performed more quickly. (Cascade connection) Mirroring is used as a method to process the boundary line. Result and parameters of the function are the same as the Gaussian Filter described above, so they are omitted.
 
-
----
+<br>
 
 ## Unsharp Masking
 

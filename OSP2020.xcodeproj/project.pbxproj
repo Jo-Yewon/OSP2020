@@ -89,8 +89,8 @@
 			children = (
 				179BA79A243E2E9B002542D1 /* lec04_Region */,
 				175756FC2438EF7B00A0F7AC /* lec03_Pixel */,
-				175756F82438EF3600A0F7AC /* lec01_Fundamentals */,
 				175756F72438EEF300A0F7AC /* lec02_Display */,
+				175756F82438EF3600A0F7AC /* lec01_Fundamentals */,
 				175756F02438EEB300A0F7AC /* main.cpp */,
 			);
 			path = OSP2020;
@@ -143,8 +143,8 @@
 				179BA79E243E2EC3002542D1 /* SobelGray.cpp */,
 				1785E362243F042500D8B82B /* SobelRGB.cpp */,
 				1785E35E243F03E300D8B82B /* laplacianGray.cpp */,
-				17DA77D12442F9610030DB3A /* laplacianGaussianGray.cpp */,
 				1785E364243F046B00D8B82B /* laplacianRGB.cpp */,
+				17DA77D12442F9610030DB3A /* laplacianGaussianGray.cpp */,
 				17DA77D22443011E0030DB3A /* laplacianGaussainRGB.cpp */,
 				1785E367243F051900D8B82B /* GaussianSepGray.cpp */,
 				1785E369243F053300D8B82B /* GaussianSepRGB.cpp */,

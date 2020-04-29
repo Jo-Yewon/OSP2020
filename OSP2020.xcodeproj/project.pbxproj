@@ -23,6 +23,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		173F06382447602900A72B79 /* Gaussian.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gaussian.cpp; sourceTree = "<group>"; };
+		173F06392447602900A72B79 /* salt_and_pepper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = salt_and_pepper.cpp; sourceTree = "<group>"; };
 		175756ED2438EEB300A0F7AC /* OSP2020 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OSP2020; sourceTree = BUILT_PRODUCTS_DIR; };
 		175756F02438EEB300A0F7AC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		175756F92438EF5200A0F7AC /* practice.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = practice.hpp; sourceTree = "<group>"; };
@@ -40,6 +42,9 @@
 		175757122438F44700A0F7AC /* input.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = input.jpg; sourceTree = "<group>"; };
 		175757132438F4D400A0F7AC /* ref_color.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ref_color.jpg; sourceTree = "<group>"; };
 		175757142438F4D400A0F7AC /* ref_gray.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ref_gray.jpg; sourceTree = "<group>"; };
+		17698CDB244B6A8A00CD6EEC /* adaptivethreshold.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = adaptivethreshold.cpp; sourceTree = "<group>"; };
+		17707833244C448A006FCA3D /* kMeanGray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = kMeanGray.cpp; sourceTree = "<group>"; };
+		17707834244C4499006FCA3D /* kMeanRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = kMeanRGB.cpp; sourceTree = "<group>"; };
 		1785E35E243F03E300D8B82B /* laplacianGray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = laplacianGray.cpp; sourceTree = "<group>"; };
 		1785E360243F041200D8B82B /* GaussianRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GaussianRGB.cpp; sourceTree = "<group>"; };
 		1785E362243F042500D8B82B /* SobelRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SobelRGB.cpp; sourceTree = "<group>"; };
@@ -48,6 +53,11 @@
 		1785E369243F053300D8B82B /* GaussianSepRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GaussianSepRGB.cpp; sourceTree = "<group>"; };
 		1785E36B243F056400D8B82B /* UnsharpMaskingGray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnsharpMaskingGray.cpp; sourceTree = "<group>"; };
 		1785E36D243F057800D8B82B /* UnsharpMaskingRGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnsharpMaskingRGB.cpp; sourceTree = "<group>"; };
+		178A351E244B1E85007B0AC7 /* Bilateral.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bilateral.cpp; sourceTree = "<group>"; };
+		1790B4D824545D5E00EBD4D3 /* Harris_corner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Harris_corner.cpp; sourceTree = "<group>"; };
+		1790B4D924545D5E00EBD4D3 /* Canny.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Canny.cpp; sourceTree = "<group>"; };
+		1790B4DA24545D5E00EBD4D3 /* LoG_rgb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoG_rgb.cpp; sourceTree = "<group>"; };
+		1790B4DB24547D6500EBD4D3 /* LoG_gray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoG_gray.cpp; sourceTree = "<group>"; };
 		179BA79B243E2EB2002542D1 /* GaussianGray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GaussianGray.cpp; sourceTree = "<group>"; };
 		179BA79D243E2EC3002542D1 /* lena.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = lena.jpg; sourceTree = "<group>"; };
 		179BA79E243E2EC3002542D1 /* SobelGray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SobelGray.cpp; sourceTree = "<group>"; };
@@ -68,6 +78,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		173F063724475F8E00A72B79 /* lec05_ Image Restoration */ = {
+			isa = PBXGroup;
+			children = (
+				173F06382447602900A72B79 /* Gaussian.cpp */,
+				173F06392447602900A72B79 /* salt_and_pepper.cpp */,
+				178A351E244B1E85007B0AC7 /* Bilateral.cpp */,
+			);
+			path = "lec05_ Image Restoration";
+			sourceTree = "<group>";
+		};
 		175756E42438EEB300A0F7AC = {
 			isa = PBXGroup;
 			children = (
@@ -87,6 +107,9 @@
 		175756EF2438EEB300A0F7AC /* OSP2020 */ = {
 			isa = PBXGroup;
 			children = (
+				1790B4D724545CE500EBD4D3 /* lec07_EdgeAndCornerDetection */,
+				17698CDA244B6A4F00CD6EEC /* lec06_Image Segmentation */,
+				173F063724475F8E00A72B79 /* lec05_ Image Restoration */,
 				179BA79A243E2E9B002542D1 /* lec04_Region */,
 				175756FC2438EF7B00A0F7AC /* lec03_Pixel */,
 				175756F72438EEF300A0F7AC /* lec02_Display */,
@@ -130,6 +153,27 @@
 				175757022438EF8900A0F7AC /* PDF_CDF.cpp */,
 			);
 			path = lec03_Pixel;
+			sourceTree = "<group>";
+		};
+		17698CDA244B6A4F00CD6EEC /* lec06_Image Segmentation */ = {
+			isa = PBXGroup;
+			children = (
+				17698CDB244B6A8A00CD6EEC /* adaptivethreshold.cpp */,
+				17707833244C448A006FCA3D /* kMeanGray.cpp */,
+				17707834244C4499006FCA3D /* kMeanRGB.cpp */,
+			);
+			path = "lec06_Image Segmentation";
+			sourceTree = "<group>";
+		};
+		1790B4D724545CE500EBD4D3 /* lec07_EdgeAndCornerDetection */ = {
+			isa = PBXGroup;
+			children = (
+				1790B4D924545D5E00EBD4D3 /* Canny.cpp */,
+				1790B4D824545D5E00EBD4D3 /* Harris_corner.cpp */,
+				1790B4DA24545D5E00EBD4D3 /* LoG_rgb.cpp */,
+				1790B4DB24547D6500EBD4D3 /* LoG_gray.cpp */,
+			);
+			path = lec07_EdgeAndCornerDetection;
 			sourceTree = "<group>";
 		};
 		179BA79A243E2E9B002542D1 /* lec04_Region */ = {

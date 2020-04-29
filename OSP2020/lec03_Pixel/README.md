@@ -22,7 +22,11 @@ This code increase the visibility by stretching the histogram of the image.
 
 ```void linear_stretching(Mat &input, Mat &stretched, G *trans_func, G x1, G x2, G y1, G y2)```: trans function is defined linearly as three straight lines. x1, x2, y1, y2 denote the point where the straight lines meet.
 
-![stretching](./stretching.png)
+
+<img src=./original.png width="480"> 
+
+<img src=./stretch.png width="480"> 
+
 
 <br>
 
@@ -39,7 +43,10 @@ This code increase the visibility of the image by equalizing histogram of it. Al
 
 ```void hist_eq(Mat &input, Mat &equalized, G *trans_func, float *CDF)```
 
-![equalization](./equalization.png)
+
+<img src=./original_rgb.png width="480"> 
+
+<img src=./equalized_yuv.png width="480"> 
 
 
 <br>
@@ -56,4 +63,9 @@ The purpose of this code is to adjust the histogram of input image similar to th
 
 ```void hist_matching(Mat &input, Mat &ref, Mat &matched, G *trans_func)```
 
-![matching](./matching.png)
+
+<img src=./original_rgb.png width="480"> 
+
+<img src=./ref.png width="480"> 
+
+<img src=./matched.png width="480"> 

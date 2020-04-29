@@ -1,238 +1,171 @@
-#include <opencv2/opencv.hpp>
-#include "opencv2/highgui.hpp"
 #include <iostream>
-#include <string>
+#include <opencv2/opencv.hpp>
+#include <math.h>       /* exp */
+#define IM_TYPE    CV_8UC3
 
 using namespace cv;
-using namespace std;
 
-vector<Point2f> MatToVec(const Mat input);
-Mat NonMaximum_Suppression(const Mat input, Mat corner_mat, int radius);
-Mat Mirroring(const Mat input, int n);
-void type2str(int type);
+// Image Type
+// "G" for GrayScale Image, "C" for Color Image
+#if (IM_TYPE == CV_8UC3)
+typedef uchar G;
+typedef cv::Vec3b C;
+#elif (IM_TYPE == CV_16SC3)
+typedef short G;
+typedef Vec3s C;
+#elif (IM_TYPE == CV_32SC3)
+typedef int G;
+typedef Vec3i C;
+#elif (IM_TYPE == CV_32FC3)
+typedef float G;
+typedef Vec3f C;
+#elif (IM_TYPE == CV_64FC3)
+typedef double G;
+typedef Vec3d C;
+#endif
 
+Mat unsharpMask_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt, float k);
+Mat gaussianfilter_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt);
 
 int main() {
-//Use the following three images.
-   // Mat input = imread("checkerboard.png", CV_LOAD_IMAGE_COLOR);
- //   Mat input = imread("checkerboard2.jpg", CV_LOAD_IMAGE_COLOR);
     Mat input = imread("lena.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat output;
 
-    // check for validation
-    if (!input.data) {
-        printf("Could not open\n");
+    if (!input.data)
+    {
+        std::cout << "Could not open" << std::endl;
         return -1;
     }
 
-    int row = input.rows;
-    int col = input.cols;
+    namedWindow("Original", WINDOW_AUTOSIZE);
+    imshow("Original", input);
     
-    Mat input_gray, input_visual;
-    Mat output, output_norm, corner_mat;
-    vector<Point2f> points;
+    output = unsharpMask_RGB(input, 11, 5, 5, "mirroring", 0.7);
+    //Boundary process: zero-paddle, mirroring, adjustkernel
+    namedWindow("unsharpMask", WINDOW_AUTOSIZE);
+    imshow("unsharpMask", output);
 
-    corner_mat = Mat::zeros(row, col, CV_8U);
-
-    //Option for the non-maximum suppression
-    //Compare the result when 'true' or 'false'
-    bool NonMaxSupp = true;
-
-    //Option for subpixel refinement in corner detection,
-    //Compare the result when 'true' or 'false'
-    bool Subpixel = true;
-
-    cvtColor(input, input_gray, CV_RGB2GRAY);    // convert RGB to Grayscale
-
-    //Harris corner detection using 'cornerHarris'
-    //Note that 'src' of 'cornerHarris' can be either 1) input single-channel 8-bit or 2) floating-point image.
-    output = Mat::zeros(row, col, input_gray.type());
-    cornerHarris(input_gray, output, 2, 3, 0.04);
-
-    //Scale the Harris response map 'output' from 0 to 1.
-    //This is for display purpose only.
-    normalize(output, output_norm, 0, 1.0, NORM_MINMAX);
-    namedWindow("Harris Response", WINDOW_AUTOSIZE);
-    imshow("Harris Response", output_norm);
-    
-    //Threshold the Harris corner response.
-    //corner_mat = 1 for corner, 0 otherwise.
-    input_visual = input.clone();
-    double minVal, maxVal;        Point minLoc, maxLoc;
-    minMaxLoc(output, &minVal, &maxVal, &minLoc, &maxLoc);
-
-    int corner_num = 0;
-    for (int i = 0; i < row; i++) {
-        for (int j = 0; j < col; j++) {
-            if (output.at<float>(i, j) > 0.01 * maxVal)
-            {
-                //You can also use this function of drawing a circle. For details, search 'circle' in OpenCV.
-                circle(input_visual, Point(j, i), 2, Scalar(0, 0, 255), 1, 8, 0);
-                
-                corner_mat.at<uchar>(i, j) = 1;
-                corner_num++;
-            }
-
-            else
-                output.at<float>(i, j) = 0.0;
-        }
-    }
-    printf("After cornerHarris, corner number = %d\n\n", corner_num);
-    namedWindow("Harris Corner", WINDOW_AUTOSIZE);
-    imshow("Harris Corner", input_visual);
-
-    //Non-maximum suppression
-    if (NonMaxSupp)
-    {
-        NonMaximum_Suppression(output, corner_mat, 2);
-        
-        corner_num = 0;
-        input_visual = input.clone();
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                if (corner_mat.at<uchar>(i, j) == 1) {
-                    //You can also use this function of drawing a circle. For details, search 'circle' in OpenCV.
-                    circle(input_visual, Point(j, i), 2, Scalar(0, 0, 255), 1, 8, 0);
-                    corner_num++;
-                }
-            }
-        }
-
-        printf("After non-maximum suppression, corner number = %d\n\n", corner_num);
-        namedWindow("Harris Corner (Non-max)", WINDOW_AUTOSIZE);
-        imshow("Harris Corner (Non-max)", input_visual);
-    }
-    
-    //Sub-pixel refinement for detected corners
-    if (Subpixel)
-    {
-        Size subPixWinSize(3, 3);
-        Size zeroZone(-1,-1);
-        TermCriteria termcrit(TermCriteria::COUNT | TermCriteria::EPS, 20, 0.03);
-
-        points = MatToVec(corner_mat);
-
-        cornerSubPix(input_gray, points, subPixWinSize, zeroZone, termcrit);
-
-        //Display the set of corners
-        input_visual = input.clone();
-        for (int k = 0; k < points.size(); k++) {
-
-            int x = points[k].x;
-            int y = points[k].y;
-
-            if (x<0 || x>col - 1 || y<0 || y>row - 1)
-            {
-                points.pop_back();
-                continue;
-            }
-            
-            //You can also use this function of drawing a circle. For details, search 'circle' in OpenCV.
-            circle(input_visual, Point(x, y), 2, Scalar(0, 0, 255), 1, 8, 0);
-        }
-
-        printf("After subpixel-refinement, corner number = %d\n\n", points.size());
-        namedWindow("Harris Corner (subpixel)", WINDOW_AUTOSIZE);
-        imshow("Harris Corner (subpixel)", input_visual);
-    }
-    
     waitKey(0);
 
     return 0;
 }
 
-vector<Point2f> MatToVec(const Mat input)
-{
-    vector<Point2f> points;
 
-    for (int i = 0; i < input.rows; i++) {
-        for (int j = 0; j < input.cols; j++) {
-            if (input.at<uchar>(i, j) == 1) {
-                points.push_back(Point2f((float)j, (float)i));
+Mat unsharpMask_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt, float k){
+    int row = input.rows;
+    int col = input.cols;
+    float out;
+    
+    Mat lowFilterRes = gaussianfilter_RGB(input, n, sigmaT, sigmaS, opt);
+    Mat output = Mat::zeros(row, col, input.type());
+    
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            for (int channel = 0; channel < 3; channel++){
+                out = (input.at<C>(i, j)[channel] -  lowFilterRes.at<C>(i, j)[channel] * k)/(1 - k);
+                if (out < 0) out = 0;
+                else if (out > 255) out = 255;
+                output.at<C>(i, j)[channel] = (G)(out);
+            }
+    
+    return output;
+}
+
+Mat gaussianfilter_RGB(const Mat input, int n, float sigmaT, float sigmaS, const char* opt) {
+    Mat kernel;
+    
+    int row = input.rows;
+    int col = input.cols;
+    int kernel_size = (2 * n + 1);
+    int tempa, tempb;
+    float denom;
+    float kernelvalue;
+    float sum1_b, sum1_g, sum1_r, sum;
+
+    // Initialiazing Kernel Matrix
+    kernel = Mat::zeros(kernel_size, kernel_size, CV_32F);
+    
+    denom = 0.0;
+    for (int a = -n; a <= n; a++) {  // Denominator in m(s,t)
+        for (int b = -n; b <= n; b++) {
+            float value1 = exp(-(pow(a, 2) / (2 * pow(sigmaS, 2))) - (pow(b, 2) / (2 * pow(sigmaT, 2))));
+            kernel.at<float>(a+n, b+n) = value1;
+            denom += value1;
+        }
+    }
+
+    for (int a = -n; a <= n; a++) {  // Denominator in m(s,t)
+        for (int b = -n; b <= n; b++) {
+            kernel.at<float>(a+n, b+n) /= denom;
+        }
+    }
+
+    Mat output = Mat::zeros(row, col, input.type());
+    
+    
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            sum1_b = sum1_g = sum1_r = 0.0;
+
+            if (!strcmp(opt, "zero-paddle")) {
+                sum1_b = sum1_g = sum1_r = 0.0;
+                
+                for (int a = -n; a <= n; a++)
+                    for (int b = -n; b <= n; b++)
+                        if ((i + a <= row - 1) && (i + a >= 0) &&
+                            (j + b <= col - 1) && (j + b >= 0)) {
+                            //if the pixel is not a border pixel
+                            kernelvalue = kernel.at<float>(a+n, b+n);
+                            sum1_b += kernelvalue * (float)(input.at<C>(i + a, j + b)[0]);
+                            sum1_g += kernelvalue * (float)(input.at<C>(i + a, j + b)[1]);
+                            sum1_r += kernelvalue * (float)(input.at<C>(i + a, j + b)[2]);
+                        }
+                output.at<C>(i, j)[0] = (G)sum1_b;
+                output.at<C>(i, j)[1] = (G)sum1_g;
+                output.at<C>(i, j)[2] = (G)sum1_r;
+            }
+            
+            else if (!strcmp(opt, "mirroring")) {
+                sum1_b = sum1_g = sum1_r = 0.0;
+                
+                for (int a = -n; a <= n; a++)
+                    for (int b = -n; b <= n; b++) {
+                        if (i + a > row - 1) tempa = i - a;
+                        else if (i + a < 0) tempa = -(i + a);
+                        else tempa = i + a;
+                        
+                        if (j + b > col - 1) tempb = j - b;
+                        else if (j + b < 0) tempb = -(j + b);
+                        else tempb = j + b;
+                        
+                        kernelvalue = kernel.at<float>(a+n, b+n);
+                        sum1_b += kernelvalue * (float)(input.at<C>(tempa, tempb)[0]);
+                        sum1_g += kernelvalue * (float)(input.at<C>(tempa, tempb)[1]);
+                        sum1_r += kernelvalue * (float)(input.at<C>(tempa, tempb)[2]);
+                    }
+                output.at<C>(i, j)[0] = (G)sum1_b;
+                output.at<C>(i, j)[1] = (G)sum1_g;
+                output.at<C>(i, j)[2] = (G)sum1_r;
+            }
+
+
+            else if (!strcmp(opt, "adjustkernel")) {
+                sum1_b = sum1_g = sum1_r = sum = 0.0;
+                
+                for (int a = -n; a <= n; a++)
+                    for (int b = -n; b <= n; b++)
+                        if ((i + a <= row - 1) && (i + a >= 0) && (j + b <= col - 1) && (j + b >= 0)) {
+                        kernelvalue = kernel.at<float>(a+n, b+n);
+                        sum1_b += kernelvalue * (float)(input.at<C>(i + a, j + b)[0]);
+                        sum1_g += kernelvalue * (float)(input.at<C>(i + a, j + b)[1]);
+                        sum1_r += kernelvalue * (float)(input.at<C>(i + a, j + b)[2]);
+                        sum += kernelvalue;
+                    }
+                output.at<C>(i, j)[0] = (G)(sum1_b / sum);
+                output.at<C>(i, j)[1] = (G)(sum1_g / sum);
+                output.at<C>(i, j)[2] = (G)(sum1_r / sum);
             }
         }
     }
-
-    return points;
-}
-
-//corner_mat = 1 for corner, 0 otherwise.
-Mat NonMaximum_Suppression(const Mat input, Mat corner_mat, int radius)
-{
-    int row = input.rows;
-    int col = input.cols;
-
-    Mat input_mirror = Mirroring(input, radius);
-
-    for (int i = radius; i < row+radius; i++)
-        next: for (int j = radius; j < col+radius; j++)
-            if (corner_mat.at<uchar>(i, j) == 1)
-                for (int a = -radius; a <= radius; a++)
-                    for (int b = -radius; b <= radius; b++)
-                        if (input.at<float>(i,j) < input.at<float>(i+a, j+b)){
-                            corner_mat.at<uchar>(i, j) = 0;
-                            goto next;
-                        }
-    return input;
-}
-
-Mat Mirroring(const Mat input, int n)
-{
-    int row = input.rows;
-    int col = input.cols;
-
-    Mat input2 = Mat::zeros(row + 2 * n, col + 2 * n, input.type());
-    int row2 = input2.rows;
-    int col2 = input2.cols;
-
-    for (int i = n; i < row + n; i++) {
-        for (int j = n; j < col + n; j++) {
-            input2.at<float>(i, j) = input.at<float>(i - n, j - n);
-        }
-    }
-    for (int i = n; i < row + n; i++) {
-        for (int j = 0; j < n; j++) {
-            input2.at<float>(i, j) = input2.at<float>(i, 2 * n - j);
-        }
-        for (int j = col + n; j < col2; j++) {
-            input2.at<float>(i, j) = input2.at<float>(i, 2 * col - 2 + 2 * n - j);
-        }
-    }
-    for (int j = 0; j < col2; j++) {
-        for (int i = 0; i < n; i++) {
-            input2.at<float>(i, j) = input2.at<float>(2 * n - i, j);
-        }
-        for (int i = row + n; i < row2; i++) {
-            input2.at<float>(i, j) = input2.at<float>(2 * row - 2 + 2 * n - i, j);
-        }
-    }
-
-    return input2;
-}
-
-
-//If you want to know the type of 'Mat', use the following function
-//For instance, for 'Mat input'
-//type2str(input.type());
-
-void type2str(int type) {
-    string r;
-
-    uchar depth = type & CV_MAT_DEPTH_MASK;
-    uchar chans = 1 + (type >> CV_CN_SHIFT);
-
-    switch (depth) {
-    case CV_8U:  r = "8U"; break;
-    case CV_8S:  r = "8S"; break;
-    case CV_16U: r = "16U"; break;
-    case CV_16S: r = "16S"; break;
-    case CV_32S: r = "32S"; break;
-    case CV_32F: r = "32F"; break;
-    case CV_64F: r = "64F"; break;
-    default:     r = "User"; break;
-    }
-
-    r += "C";
-    r += (chans + '0');
-
-    printf("Matrix: %s \n", r.c_str());
+    return output;
 }

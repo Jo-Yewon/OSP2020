@@ -11,7 +11,7 @@ The purpose of this code is to apply a Mean Filter, a kind of low-pass filter to
 
 ```Mat meanfilter (const Mat input, int n, const char * opt)```: parameters are input image, kernel sizing, and border processing option in order. The border processing method can be selected from zero-paddle, mirroring, and adjustkernel and entered as a string.
 
-![mean](./mean.png)
+<img src=./median.png width="480"> 
 
 <br>
 
@@ -26,7 +26,7 @@ The purpose of this source code is to apply a Gaussian Filter, a low pass filter
 
 ```Mat gaussianfilter (const Mat input, int n, float sigmaT, float sigmaS, const char * opt)```: parameters are input image, kernel size, two sigma in Gaussian expression, boundary processing option. The boundary processing method can be selected from zero-paddle, mirroring and adjustkernel and entered as a string.
 
-![gaussian](./gaussian.png)
+<img src=./gaussian.png width="480"> 
 
 <br>
 
@@ -41,7 +41,7 @@ This source code is intended to apply Sobel Filter, a high pass filter to the im
 
 ```Mat sobelfilter (const Mat input)``` 
 
-![sobel](./sobel.png)
+<img src=./sobel.png width="480"> 
 
 
 <br>
@@ -57,20 +57,7 @@ This source code is intended to apply a high pass filter, Laplacian Filter, to a
 
 ```Mat laplacianfilter (const Mat input)```
 
-![laplacian](./laplacian.png)
-
-<br>
-
-## Laplacian of Gaussian(LoG)
-
-- LaplacianGaussianGray.cpp
-- LaplacianGaussianRGB.cpp
-
-To use, place your image in the same directory with exec files.
-
-This source code is intended to apply a high pass filter, Laplacian Filter, to an image. But, Laplacian filter is sensitive to noise. Therefore, in this code a low-pass filter, a Gaussian filter is applied first before apply laplacian.
-
-![LoG](./LoG.png)
+<img src=./laplacian.png width="480"> 
 
 <br>
 
@@ -96,4 +83,4 @@ This source code aims to make the image more sharp Therefore, the image with the
 
 ```unsharpMask (const Mat input, int n, float sigmaT, float sigmaS, const char * opt, float k)```: Parameters except for k are the same as Gaussian Filter described above, so they are omitted. The last parameter, k, is a constant used to scale the low-pass filter. That is, output = (1-kL) / (1-k) and L = the image applied low-pass filter.
 
-![unsharp](./unsharp.png)
+<img src=./unsharp.png width="480"> 

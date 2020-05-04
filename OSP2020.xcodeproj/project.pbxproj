@@ -23,6 +23,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		17016AF92460138D004A6DC6 /* SIFT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SIFT.cpp; sourceTree = "<group>"; };
+		17016AFA246043AE004A6DC6 /* Feature_Homography.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Feature_Homography.cpp; sourceTree = "<group>"; };
 		173F06382447602900A72B79 /* Gaussian.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gaussian.cpp; sourceTree = "<group>"; };
 		173F06392447602900A72B79 /* salt_and_pepper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = salt_and_pepper.cpp; sourceTree = "<group>"; };
 		175756ED2438EEB300A0F7AC /* OSP2020 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OSP2020; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,6 +80,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		17016AF824601374004A6DC6 /* lec08_Descriptor */ = {
+			isa = PBXGroup;
+			children = (
+				17016AF92460138D004A6DC6 /* SIFT.cpp */,
+				17016AFA246043AE004A6DC6 /* Feature_Homography.cpp */,
+			);
+			path = lec08_Descriptor;
+			sourceTree = "<group>";
+		};
 		173F063724475F8E00A72B79 /* lec05_ Image Restoration */ = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +118,7 @@
 		175756EF2438EEB300A0F7AC /* OSP2020 */ = {
 			isa = PBXGroup;
 			children = (
+				17016AF824601374004A6DC6 /* lec08_Descriptor */,
 				1790B4D724545CE500EBD4D3 /* lec07_EdgeAndCornerDetection */,
 				17698CDA244B6A4F00CD6EEC /* lec06_Image Segmentation */,
 				173F063724475F8E00A72B79 /* lec05_ Image Restoration */,
